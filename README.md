@@ -70,7 +70,7 @@ O projeto já possui um `Dockerfile` configurado para resolver todas as dependê
     ```
 
 ## 📸 Demonstração
-![Swagger UI](Captura de tela 2025-11-01 055658.png)
+![Swagger UI](captura_de_tela.png)
 ![Exemplo PDF](Relatorio_Gabriel.pdf)
 
 ## 📂 Estrutura do Projeto

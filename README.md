@@ -72,7 +72,7 @@ O projeto já possui um `Dockerfile` configurado para resolver todas as dependê
 ## 📸 Demonstração
 
 ### Interface da API (Swagger UI)
-![Swagger UI](Captura de tela.png)
+![Swagger UI](Captura_de_tela.png)
 
 ### Relatório PDF Gerado
 ![Exemplo PDF](Relatorio_Gabriel.pdf)

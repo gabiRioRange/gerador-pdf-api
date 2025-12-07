@@ -69,6 +69,10 @@ O projeto já possui um `Dockerfile` configurado para resolver todas as dependê
     python api.py
     ```
 
+## 📸 Demonstração
+![Swagger UI](Captura de tela 2025-11-01 055658.png)
+![Exemplo PDF](Relatorio_Gabriel.pdf)
+
 ## 📂 Estrutura do Projeto
 
 ```text

@@ -1,0 +1,15 @@
+# Python e Venv
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Arquivos Gerados (não queremos versionar os relatórios de teste)
+*.pdf
+*.png
+*.xlsx
+
+# Logs e Dados Temporários
+temp_input_*.xlsx
+chart_*.png

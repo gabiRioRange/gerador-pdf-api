@@ -1,88 +1,103 @@
-# 📊 Gerador de Relatórios Financeiros Automatizado (PDF)
+# 📊 Gerador de Relatórios Financeiros Fullstack (PDF + Email)
 
-> Um microserviço robusto que transforma dados brutos de Excel em relatórios PDF executivos, utilizando Python, Pandas e Docker.
+> Uma solução completa que transforma dados de Excel em relatórios executivos, com interface web moderna, envio automático por e-mail e processamento de dados em Python.
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.68+-green.svg)
+![Frontend](https://img.shields.io/badge/Frontend-TailwindCSS-06B6D4)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
-![Security](https://img.shields.io/badge/Security-MIME%20Validation-red)
 
 ## 📝 Visão Geral
 
-Este projeto é uma API RESTful desenvolvida para automatizar a criação de relatórios gerenciais. O sistema recebe arquivos Excel (`.xlsx`), processa os dados utilizando técnicas de **ETL** (Extract, Transform, Load), calcula KPIs financeiros e gera visualizações gráficas (Matplotlib) incorporadas em um layout PDF profissional (WeasyPrint).
+Este projeto é uma aplicação **Fullstack** (Backend + Frontend) desenvolvida para automatizar a rotina de análise financeira. 
 
-O foco do projeto foi criar uma solução escalável, containerizada e segura, pronta para implantação em nuvem.
+O sistema oferece uma **Interface Web Responsiva** onde o usuário faz o upload de uma planilha Excel (`.xlsx`). O backend processa os dados (ETL), gera gráficos de tendências, compila um PDF profissional e entrega o resultado via **Download Direto** ou **E-mail automático** (SMTP).
+
+O foco foi criar uma arquitetura segura, desacoplada (Background Tasks) e containerizada.
 
 ## 🚀 Funcionalidades Principais
 
+* **Frontend Moderno (UI):**
+    * Interface web construída com **HTML5** e **TailwindCSS**.
+    * Feedback visual de processamento em tempo real.
+    * Design responsivo e amigável.
 * **Processamento de Dados (Data Science):**
-    * Cálculo automático de Faturamento Total, Ticket Médio e Top Produtos.
-    * Análise temporal (tendência de vendas semanais).
-    * Geração dinâmica de gráficos de barras e linhas.
+    * Cálculo automático de KPIs (Faturamento, Ticket Médio, Top Produtos).
+    * Análise temporal (tendência de vendas semanais com `pandas.resample`).
+    * Geração de gráficos de barras e linhas com **Matplotlib**.
 * **Engenharia de Backend:**
     * API assíncrona com **FastAPI**.
-    * Gerenciamento de tarefas em segundo plano (`BackgroundTasks`) para limpeza de arquivos temporários.
-    * Validação de Segurança (verificação rigorosa de MIME Type para evitar uploads maliciosos).
-* **Visualização:**
-    * Renderização de templates HTML/CSS com **Jinja2**.
-    * Layout responsivo para impressão (paginação inteligente, cabeçalhos repetidos).
+    * **Envio de E-mail:** Integração SMTP com `fastapi-mail` rodando em background para não travar a interface.
+    * **Segurança:** Uso de variáveis de ambiente (`.env`) para proteção de credenciais e validação rigorosa de MIME Types.
 * **DevOps:**
-    * Containerização completa com **Docker** (imagem Linux Debian-slim otimizada).
+    * Containerização completa com **Docker** (imagem Linux Debian-slim otimizada para WeasyPrint).
 
 ## 🛠️ Tech Stack
 
-* **Linguagem:** Python 3.9
-* **Web Framework:** FastAPI + Uvicorn
-* **Análise de Dados:** Pandas
-* **Visualização:** Matplotlib
-* **Motor de PDF:** WeasyPrint + Jinja2
+* **Backend:** Python 3.9, FastAPI, Uvicorn
+* **Frontend:** HTML5, JavaScript (Fetch API), TailwindCSS
+* **Data & Viz:** Pandas, Matplotlib
+* **PDF Engine:** WeasyPrint + Jinja2 Templates
 * **Infraestrutura:** Docker
+* **Segurança:** Python-Dotenv
 
 ## ⚙️ Como Executar
 
-### Opção 1: Via Docker (Recomendado)
+### Pré-requisito: Configuração de Ambiente (.env)
 
-O projeto já possui um `Dockerfile` configurado para resolver todas as dependências de sistema (GTK/Pango).
+Para que o envio de e-mail funcione, crie um arquivo chamado `.env` na raiz do projeto e configure suas credenciais SMTP (ex: Senha de App do Gmail):
 
-1.  **Construa a imagem:**
-    ```bash
-    docker build -t gerador-pdf .
-    ```
+```ini
+MAIL_USERNAME=seu_email@gmail.com
+MAIL_PASSWORD=sua_senha_de_app
+MAIL_FROM=seu_email@gmail.com
+MAIL_PORT=587
+MAIL_SERVER=smtp.gmail.com
+```
+Opção 1: Via Docker (Recomendado)
 
-2.  **Rode o container:**
-    ```bash
-    docker run -p 8000:8000 gerador-pdf
-    ```
+O projeto possui um Dockerfile que resolve todas as dependências do sistema Linux.
 
-3.  Acesse a documentação interativa (Swagger UI) em: `http://localhost:8000/docs`
+Construa a imagem:
+    Bash
 
-### Opção 2: Localmente (Windows/Linux)
+      docker build -t gerador-pdf .
 
-1.  Instale as dependências:
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *(Nota: No Windows, pode ser necessário instalar o GTK3 Runtime separadamente para o WeasyPrint funcionar).*
+Rode o container:
+Bash
 
-2.  Execute o servidor:
-    ```bash
+    docker run -p 8000:8000 --env-file .env gerador-pdf
+
+   Acesse a Interface Web em: http://localhost:8000
+
+Opção 2: Localmente (Windows/Linux)
+
+Instale as dependências:
+    Bash
+
+      pip install -r requirements.txt
+
+Execute o servidor:
+Bash
+
     python api.py
-    ```
 
 ## 📸 Demonstração
+Nova Interface Web
 
-### Interface da API (Swagger UI)
-![Swagger UI](Captura_de_tela.png)
+Relatório PDF Gerado
 
-### Relatório PDF Gerado
-![Exemplo PDF](Relatorio_Gabriel.pdf)
+
 
 ## 📂 Estrutura do Projeto
+Plaintext
 
-```text
-/
-├── api.py             # Aplicação principal (Endpoints e Lógica de Negócio)
-├── template.html      # Layout do relatório (HTML + CSS Jinja2)
-├── Dockerfile         # Configuração da imagem Docker
-├── requirements.txt   # Dependências do Python
-└── main.py            # (Legado) Versão script CLI para testes locais
+      /
+      ├── api.py             # Backend (Endpoints, Lógica de Email e Dados)
+      ├── ui.html            # Frontend (Interface Gráfica com Tailwind)
+      ├── template.html      # Layout do Relatório PDF (Jinja2)
+      ├── Dockerfile         # Configuração da imagem Docker
+      ├── requirements.txt   # Dependências do Python
+      └── .env               # Arquivo de Variáveis (NÃO COMITAR)
+
+Desenvolvido por Gabriel 💻

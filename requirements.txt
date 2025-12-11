@@ -6,3 +6,6 @@ matplotlib
 jinja2
 weasyprint
 openpyxl
+fastapi-mail
+python-dotenv
+email-validator

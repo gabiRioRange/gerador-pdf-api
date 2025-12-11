@@ -13,3 +13,14 @@ env/
 # Logs e Dados Temporários
 temp_input_*.xlsx
 chart_*.png
+
+# Ignorar configurações sensíveis
+.env
+.env.local
+
+# Ignorar arquivos temporários e virtuais
+__pycache__/
+.venv/
+*.pdf
+*.xlsx
+*.png

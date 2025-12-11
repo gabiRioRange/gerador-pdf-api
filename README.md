@@ -87,7 +87,7 @@ Nova Interface Web
 
 Relatório PDF Gerado
 
-
+![Texto Alternativo](Captura_de_tela.png)
 
 ## 📂 Estrutura do Projeto
 Plaintext

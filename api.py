@@ -1,7 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks, HTTPException, Form
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
-from pydantic import EmailStr
 from dotenv import load_dotenv
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,21 +10,16 @@ from datetime import datetime
 import os
 import shutil
 import uuid
-from fastapi.responses import FileResponse, JSONResponse, HTMLResponse # <--- Adicione HTMLResponse
 
 # --- CONFIGURAÇÃO INICIAL ---
 
 # 1. Carrega as senhas do arquivo .env
 load_dotenv()
 
-app = FastAPI(title="Gerador de Relatórios PDF - Enterprise Edition")
+app = FastAPI(title="Gerador de Relatórios Financeiros Fullstack")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 2. Configuração do Servidor de Email (Lê do .env)
-# Verifica se as variáveis existem para evitar erro silencioso
-if not os.getenv("MAIL_USERNAME"):
-    print("⚠️ AVISO: Configurações de e-mail não encontradas no .env")
-
 conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME", ""),
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD", ""),
@@ -114,12 +108,13 @@ def limpar_arquivos(files):
             if os.path.exists(f): os.remove(f)
         except: pass
 
+def valida_excel(file: UploadFile):
+    if "spreadsheet" not in file.content_type and "excel" not in file.content_type:
+         raise HTTPException(status_code=415, detail="Arquivo inválido. Envie um .xlsx")
+
 # --- ENDPOINTS DA API ---
 
-app = FastAPI(title="Gerador de Relatórios PDF - Enterprise Edition")
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# --- NOVO: ROTA PARA A INTERFACE (FRONTEND) ---
+# Rota Principal (Interface Gráfica)
 @app.get("/", response_class=HTMLResponse)
 async def home():
     """Renderiza a página HTML da interface."""
@@ -127,11 +122,12 @@ async def home():
     with open(path_ui, "r", encoding="utf-8") as f:
         return f.read()
 
+# Rota de Download Direto
 @app.post("/gerar-pdf-download/")
 async def gerar_pdf_download(
     background_tasks: BackgroundTasks, 
     file: UploadFile = File(...), 
-    autor: str = "Gabriel"
+    autor: str = Form("Gabriel")
 ):
     """Gera o PDF e faz o download direto no navegador."""
     valida_excel(file)
@@ -152,11 +148,11 @@ async def gerar_pdf_download(
         limpar_arquivos([temp_in])
         return JSONResponse(status_code=500, content={"erro": str(e)})
 
-
+# Rota de Envio por E-mail (CORRIGIDA)
 @app.post("/gerar-pdf-email/")
 async def gerar_pdf_email(
     background_tasks: BackgroundTasks,
-    email_destino: EmailStr = Form(...),  # Recebe o email via formulário
+    email_destino: str = Form(...),  # <--- MUDADO PARA str PARA EVITAR ERRO DO PYDANTIC
     file: UploadFile = File(...),
     autor: str = Form("Gabriel")
 ):
@@ -195,10 +191,6 @@ async def gerar_pdf_email(
     except Exception as e:
         limpar_arquivos([temp_in, temp_out])
         return JSONResponse(status_code=500, content={"erro": str(e)})
-
-def valida_excel(file: UploadFile):
-    if "spreadsheet" not in file.content_type and "excel" not in file.content_type:
-         raise HTTPException(status_code=415, detail="Arquivo inválido. Envie um .xlsx")
 
 if __name__ == "__main__":
     import uvicorn
